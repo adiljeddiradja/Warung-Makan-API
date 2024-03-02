@@ -17,8 +17,11 @@ public class Customer {
     private String id;
 
     @Column(name = "name")
-    private String customer;
+    private String name;
 
     @Column(name = "phone_number")
     private  String phoneNumber;
+
+    @Column(name = "status")
+    private Boolean status;
 }

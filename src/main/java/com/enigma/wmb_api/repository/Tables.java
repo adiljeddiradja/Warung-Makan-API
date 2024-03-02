@@ -1,8 +1,11 @@
 package com.enigma.wmb_api.repository;
 
+import com.enigma.wmb_api.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-@Service
-public interface Tables extends JpaRepository <Tables, String> {
+@Repository
+
+public interface Tables extends JpaRepository <Customer, String> {
 }
