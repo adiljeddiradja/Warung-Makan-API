@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +30,16 @@ public class MenuController {
                 .data(newMenu)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    public ResponseEntity<CommonResponse<MenuRespone>>getMenuById(@PathVariable String id) {
+        MenuRespone menu = menuService.getOneById(id);
+        CommonResponse<MenuRespone> response = CommonResponse.<MenuRespone>builder()
+                .statusCode(HttpStatus.OK.value())
+                .messege(ResponseMessage.SUCCESS_GET_DATA)
+                .data(menu)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
 }
