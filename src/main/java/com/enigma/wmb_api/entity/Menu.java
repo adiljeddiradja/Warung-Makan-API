@@ -21,4 +21,7 @@ public class Menu {
 
     @Column(name = "price")
     private Long price;
+
+    @Column(name = "stock")
+    private Integer stock;
 }
