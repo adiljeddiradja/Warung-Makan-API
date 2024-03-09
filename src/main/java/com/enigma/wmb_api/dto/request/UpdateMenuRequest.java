@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateProductRequest {
+public class UpdateMenuRequest {
     private String id;
     private String name;
     private Long price;

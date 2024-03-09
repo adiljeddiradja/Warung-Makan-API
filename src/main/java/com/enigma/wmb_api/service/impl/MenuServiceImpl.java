@@ -3,7 +3,7 @@ package com.enigma.wmb_api.service.impl;
 import com.enigma.wmb_api.constant.ResponseMessage;
 import com.enigma.wmb_api.dto.request.NewMenuRequest;
 import com.enigma.wmb_api.dto.request.SearchMenuRequest;
-import com.enigma.wmb_api.dto.request.UpdateProductRequest;
+import com.enigma.wmb_api.dto.request.UpdateMenuRequest;
 import com.enigma.wmb_api.dto.response.MenuRespone;
 import com.enigma.wmb_api.entity.Menu;
 import com.enigma.wmb_api.repository.MenuRepository;
@@ -64,7 +64,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public MenuRespone update(UpdateProductRequest request) {
+    public MenuRespone update(UpdateMenuRequest request) {
         Menu currentMenu = findByIdOrThrowNotFound(request.getId());
         currentMenu.setName(request.getName());
         currentMenu.setPrice(currentMenu.getPrice());
