@@ -28,7 +28,7 @@ public class BillDetail {
     @Column(name = "qty")
     private Integer qty;
 
-    @ManyToOne
+
     @JoinColumn(name = "price")
-    private Menu menPrice;
+    private Long menPrice;
 }

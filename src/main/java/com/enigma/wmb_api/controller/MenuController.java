@@ -85,7 +85,7 @@ public class MenuController {
                 .build();
         return ResponseEntity.ok(response);
     }
-    @PutMapping(
+    @PutMapping(path = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
