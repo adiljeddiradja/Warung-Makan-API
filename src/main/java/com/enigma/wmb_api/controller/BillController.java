@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping(path = APIUrl.BILL_API)
 public class BillController {
     private final BillService billService;
-    @PutMapping(
+    @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )

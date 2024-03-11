@@ -1,19 +1,15 @@
 package com.enigma.wmb_api.service.impl;
 
 import com.enigma.wmb_api.constant.ResponseMessage;
+import com.enigma.wmb_api.constant.TransTypeEnum;
 import com.enigma.wmb_api.dto.request.BillRequest;
 import com.enigma.wmb_api.dto.request.SearchBillRequest;
 import com.enigma.wmb_api.dto.response.BillDetailResponse;
 import com.enigma.wmb_api.dto.response.BillResponse;
-import com.enigma.wmb_api.entity.Bill;
-import com.enigma.wmb_api.entity.BillDetail;
-import com.enigma.wmb_api.entity.Customer;
-import com.enigma.wmb_api.entity.Menu;
+import com.enigma.wmb_api.entity.*;
 import com.enigma.wmb_api.repository.BillRepository;
-import com.enigma.wmb_api.service.BillDetailService;
-import com.enigma.wmb_api.service.BillService;
-import com.enigma.wmb_api.service.CustomerService;
-import com.enigma.wmb_api.service.MenuService;
+import com.enigma.wmb_api.repository.TransTypeRepository;
+import com.enigma.wmb_api.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,15 +30,18 @@ public class BillServiceImpl implements BillService {
     private final BillDetailService billDetailService;
     private final CustomerService customerService;
     private final MenuService menuService;
+    private final TablesService tablesService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public BillResponse create(BillRequest request) {
         Customer customer = customerService.getByid(request.getCustomerId());
+        Tables tables=tablesService.getByid(request.getTablesId());
 
         Bill trx = Bill.builder()
                 .customer(customer)
                 .transDate(new Date())
+                .tables(tables)
                 .build();
         billRepository.saveAndFlush(trx);
 
@@ -76,6 +76,7 @@ public class BillServiceImpl implements BillService {
         return BillResponse.builder()
                 .id(trx.getId())
                 .customerId(trx.getCustomer().getId())
+                .tablesId(trx.getTables().getId())
                 .transDate(trx.getTransDate())
                 .billDetail(trxDetailResponses)
                 .build();
@@ -97,6 +98,7 @@ public class BillServiceImpl implements BillService {
             return new BillResponse().builder()
                     .id(trx.getId())
                     .customerId(trx.getCustomer().getId())
+                    .tablesId(trx.getTables().getId())
                     .transDate(trx.getTransDate())
                     .billDetail(trxDetailResponses)
                     .build();
