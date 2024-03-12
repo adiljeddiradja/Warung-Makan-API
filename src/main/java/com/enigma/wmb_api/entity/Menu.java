@@ -24,4 +24,8 @@ public class Menu {
 
     @Column(name = "stock")
     private Integer stock;
+
+    @OneToOne
+    @JoinColumn(name = "image_id", unique = true)
+    private Image image;
 }

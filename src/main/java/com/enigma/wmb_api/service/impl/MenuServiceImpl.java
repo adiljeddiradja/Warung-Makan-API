@@ -1,15 +1,20 @@
 package com.enigma.wmb_api.service.impl;
 
+import com.enigma.wmb_api.constant.APIUrl;
 import com.enigma.wmb_api.constant.ResponseMessage;
 import com.enigma.wmb_api.dto.request.NewMenuRequest;
 import com.enigma.wmb_api.dto.request.SearchMenuRequest;
 import com.enigma.wmb_api.dto.request.UpdateMenuRequest;
+import com.enigma.wmb_api.dto.response.ImageResponse;
 import com.enigma.wmb_api.dto.response.MenuRespone;
+import com.enigma.wmb_api.entity.Image;
 import com.enigma.wmb_api.entity.Menu;
 import com.enigma.wmb_api.repository.MenuRepository;
+import com.enigma.wmb_api.service.ImageService;
 import com.enigma.wmb_api.service.MenuService;
 import com.enigma.wmb_api.spesification.MenuSpesification;
 import com.enigma.wmb_api.util.ValidationUtil;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,15 +31,19 @@ import org.springframework.web.server.ResponseStatusException;
 public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
     private final ValidationUtil validationUtil;
+    private final ImageService imageService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public MenuRespone create(NewMenuRequest request) {
         validationUtil.validate(request);
+        if (request.getImage().isEmpty())throw new ConstraintViolationException("image is requires!",null);
+        Image image = imageService.create(request.getImage());
         Menu menu = Menu.builder()
                 .name(request.getName())
                 .price(request.getPrice())
                 .stock(request.getStock())
+                .image(image)
                 .build();
         menuRepository.saveAndFlush(menu);
         return convertMenuToMenuResponse(menu);
@@ -45,12 +54,13 @@ public class MenuServiceImpl implements MenuService {
         Menu menu = findByIdOrThrowNotFound(id);
         return convertMenuToMenuResponse(menu);
     }
-
+    @Transactional(readOnly = true)
     @Override
     public Menu getById(String id) {
         return findByIdOrThrowNotFound(id);
 
     }
+
     @Transactional(readOnly = true)
     @Override
     public Page<MenuRespone> getAll(SearchMenuRequest request) {
@@ -77,6 +87,7 @@ public class MenuServiceImpl implements MenuService {
     public Menu update(Menu menu) {
         return menuRepository.saveAndFlush(menu);
     }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteById(String id) {
@@ -91,6 +102,10 @@ public class MenuServiceImpl implements MenuService {
                 .name(product.getName())
                 .price(product.getPrice())
                 .stock(product.getStock())
+                .image(ImageResponse.builder()
+                        .url(APIUrl.PRODUCT_IMAGE_DOWNLOAD_API + product.getImage().getId())
+                        .name(product.getImage().getName())
+                        .build())
                 .build();
     }
 

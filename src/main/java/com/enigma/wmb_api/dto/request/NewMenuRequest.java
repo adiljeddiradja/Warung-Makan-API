@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -21,6 +22,8 @@ public class NewMenuRequest {
     @NotNull(message = "stock is required!")
     @Min(value = 0, message = "price must be greater than or equal 0")
     private Integer stock;
+
+    private MultipartFile image;
 
 
 

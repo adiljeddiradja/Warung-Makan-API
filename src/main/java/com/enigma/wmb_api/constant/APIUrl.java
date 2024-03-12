@@ -6,4 +6,5 @@ public class APIUrl {
     public static final String BILL_API = "api/bills";
     public static final String TABLES_API = "api/tables";
     public static final String AUTH_API = "api/auth";
+    public static final String PRODUCT_IMAGE_DOWNLOAD_API = "/api/menus/images/";
 }
