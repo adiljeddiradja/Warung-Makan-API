@@ -4,6 +4,7 @@ import com.enigma.wmb_api.constant.APIUrl;
 import com.enigma.wmb_api.constant.ResponseMessage;
 import com.enigma.wmb_api.dto.request.BillRequest;
 import com.enigma.wmb_api.dto.request.SearchBillRequest;
+import com.enigma.wmb_api.dto.request.UpdateBillRequest;
 import com.enigma.wmb_api.dto.response.BillResponse;
 import com.enigma.wmb_api.dto.response.CommonResponse;
 import com.enigma.wmb_api.dto.response.PagingResponse;
@@ -16,17 +17,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = APIUrl.BILL_API)
 public class BillController {
     private final BillService billService;
+
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<CommonResponse<BillResponse>> createNewBill(@RequestBody BillRequest request) {
+    public ResponseEntity<CommonResponse<BillResponse>> createNewTransaction(@RequestBody BillRequest request) {
         BillResponse bill = billService.create(request);
         CommonResponse<BillResponse> response = CommonResponse.<BillResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
@@ -35,31 +38,45 @@ public class BillController {
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CommonResponse<List<BillResponse>>>getAllBills(
-            @RequestParam(name = "page",defaultValue = "1") Integer page,
-            @RequestParam(name = "size",defaultValue = "10") Integer size
-    ){
+    public ResponseEntity<CommonResponse<List<BillResponse>>> getAllTransaction(
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size
+    ) {
         SearchBillRequest request = SearchBillRequest.builder()
                 .page(page)
                 .size(size)
                 .build();
-
-        Page<BillResponse> bills =billService.getAll(request);
+        Page<BillResponse> bill = billService.getAll(request);
         PagingResponse paging = PagingResponse.builder()
-                .page(page)
-                .size(size)
-                .hasPrevious(bills.hasPrevious())
-                .hasNext(bills.hasNext())
-                .totalPage(bills.getTotalPages())
-                .totalElemet(bills.getTotalElements())
+                .page(bill.getPageable().getPageNumber() + 1)
+                .size(bill.getPageable().getPageSize())
+                .totalPage(bill.getTotalPages())
+                .totalElemet(bill.getTotalElements())
+                .hasNext(bill.hasNext())
+                .hasPrevious(bill.hasPrevious())
                 .build();
-        CommonResponse<List<BillResponse>>response= CommonResponse.<List<BillResponse>>builder()
+        CommonResponse<List<BillResponse>> response = CommonResponse.<List<BillResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .messege(ResponseMessage.SUCCESS_GET_DATA)
+                .data(bill.getContent())
                 .pagging(paging)
                 .build();
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/status")
+    public ResponseEntity<CommonResponse<?>> updateStatus(@RequestBody Map<String, Object> request) {
+        UpdateBillRequest updateTransactionStatusRequest = UpdateBillRequest.builder()
+                .orderId(request.get("order_id").toString())
+                .transactionStatus(request.get("transaction_status").toString())
+                .build();
+        billService.updateStatus(updateTransactionStatusRequest);
+        return ResponseEntity.ok(CommonResponse.builder()
+                .statusCode(HttpStatus.OK.value())
+                .messege(ResponseMessage.SUCCESS_UPDATE_DATA)
+                .build());
     }
 
 }

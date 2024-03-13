@@ -1,7 +1,6 @@
 package com.enigma.wmb_api.entity;
 
 import com.enigma.wmb_api.constant.ConstantTable;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,11 +20,6 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String Id;
 
-    @Column(name = "trans_date")
-    @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date transDate;
-
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
@@ -41,5 +35,13 @@ public class Bill {
     @OneToMany(mappedBy = "bill")
     @JsonManagedReference
     private List<BillDetail> billDetails;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "trans_date", updatable = false)
+    private Date transDate;
+
+    @OneToOne
+    @JoinColumn(name = "payment_id", unique = true)
+    private Payment payment;
 
 }

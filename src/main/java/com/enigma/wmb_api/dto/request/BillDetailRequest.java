@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class BillDetailRequest {
-    private String id;
+    private String menuId;
     private Integer qty;
 }
