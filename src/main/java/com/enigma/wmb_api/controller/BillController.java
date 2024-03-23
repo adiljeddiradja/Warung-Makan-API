@@ -9,6 +9,8 @@ import com.enigma.wmb_api.dto.response.BillResponse;
 import com.enigma.wmb_api.dto.response.CommonResponse;
 import com.enigma.wmb_api.dto.response.PagingResponse;
 import com.enigma.wmb_api.service.BillService;
+import com.opencsv.CSVWriter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -78,5 +81,31 @@ public class BillController {
                 .messege(ResponseMessage.SUCCESS_UPDATE_DATA)
                 .build());
     }
+    @GetMapping("/export-csv")
+    public void exportToCsv(HttpServletResponse response,
+                            @RequestParam(name = "page", defaultValue = "1") Integer page,
+                            @RequestParam(name = "size", defaultValue = "10") Integer size) throws IOException {
+        SearchBillRequest request = SearchBillRequest.builder()
+                .page(page)
+                .size(size)
+                .build();
+        Page<BillResponse> bill = billService.getAll(request);
 
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=bills.csv");
+
+
+        try (CSVWriter csvWriter = new CSVWriter(response.getWriter())) {
+
+            csvWriter.writeNext(new String[]{"Bill ID", "Amount", "Date"});
+
+            for (BillResponse billResponse : bill.getContent()) {
+                csvWriter.writeNext(new String[]{
+                        String.valueOf(billResponse.getId()),
+                        String.valueOf(billResponse.getAmount()),
+                        billResponse.getTransDate().toString()
+                });
+            }
+        }
+    }
 }

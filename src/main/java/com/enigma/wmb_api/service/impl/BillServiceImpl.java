@@ -6,6 +6,7 @@ import com.enigma.wmb_api.dto.request.SearchBillRequest;
 import com.enigma.wmb_api.dto.request.UpdateBillRequest;
 import com.enigma.wmb_api.dto.response.BillDetailResponse;
 import com.enigma.wmb_api.dto.response.BillResponse;
+import com.enigma.wmb_api.dto.response.ExportBillResponse;
 import com.enigma.wmb_api.entity.Payment;
 import com.enigma.wmb_api.dto.response.PaymentResponse;
 import com.enigma.wmb_api.entity.*;
@@ -22,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -112,6 +114,7 @@ public class BillServiceImpl implements BillService {
                     .build();
         });
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     @Override

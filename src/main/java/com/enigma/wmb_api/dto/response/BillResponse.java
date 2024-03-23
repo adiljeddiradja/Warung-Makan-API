@@ -19,4 +19,5 @@ public class BillResponse {
     private Date transDate;
     private List<BillDetailResponse> billDetail;
     private PaymentResponse paymentResponse;
+    private Long Amount;
 }
